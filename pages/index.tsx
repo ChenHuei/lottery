@@ -7,7 +7,7 @@ const LIST = Array(100)
   .fill(0)
   .map((_, index) => ({
     id: index + 1,
-    label: `${index + 1} ${Math.random() > 0.5 ? "先生" : "小姐"}`,
+    label: index + 1,
   }));
 
 const MINUTE_SECOND = 60;
