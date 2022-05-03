@@ -54,20 +54,35 @@ const Home: NextPage = () => {
     };
   }, [dispatch, isCountdown, list, second]);
 
+  useEffect(() => {
+    dispatch(
+      setUserSlice({
+        list: Array(100)
+          .fill(0)
+          .map((_, index) => ({
+            id: index + 1,
+            label: `${(index + 1).toString().padStart(2, "0")} ${
+              Math.random() > 0.5 ? "先生" : "小姐"
+            }`,
+          })),
+      })
+    );
+  }, [dispatch]);
+
   return (
     <main className="flex justify-center items-center bg-blue-200">
-      <div className="w-full h-screen max-w-2xl flex p-8 bg-white">
-        <div className="flex-1 mr-4">
-          <h4 className="text-xl">抽獎時間</h4>
+      <div className="w-full h-screen max-w-2xl flex flex-col md:flex-row justify-space-between p-8 bg-white">
+        <div className="h-1/2 md:h-full flex-1 md:mr-4">
+          <h4 className="mb-2 text-xl">抽獎時間</h4>
           <input
-            className="w-full my-2 mr-2 p-2 border"
+            className="w-full mr-2 p-2 border"
             type="text"
             placeholder="請輸入倒數時間/分鐘"
             value={value}
             onChange={(e) => setValue(parseInt(e.target.value) || "")}
           />
           <button
-            className="mb-2 p-2 bg-black text-white border hover:opacity-60"
+            className="my-2 p-2 bg-black text-white border hover:opacity-60"
             onClick={onClick}
           >
             設定
@@ -76,17 +91,25 @@ const Home: NextPage = () => {
 
           {winner && (
             <div className="mt-4">
-              <h4 className="text-xl">抽獎結果</h4>
+              <h4 className="mb-2 text-xl">抽獎結果</h4>
               <div className="p-2 border">
                 <p>{winner.label}</p>
               </div>
             </div>
           )}
         </div>
-        <div className="flex-1 overflow-y-scroll">
-          {list.map((item) => (
-            <div key={item.id}>{item.label}</div>
-          ))}
+        <div className="h-1/2 md:h-full flex-1">
+          <h4 className="mb-2 text-xl">抽獎名單</h4>
+          <div
+            className="p-2 border overflow-y-scroll"
+            style={{ height: "calc(100% - 28px)" }}
+          >
+            {list.map((item) => (
+              <div key={item.id} className="mb-1 last:mb-0">
+                {item.label}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </main>

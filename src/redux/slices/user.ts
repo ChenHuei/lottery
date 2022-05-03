@@ -4,7 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
   id: number;
-  label: number;
+  label: string;
 }
 interface UserState {
   winner: User | null;
@@ -14,12 +14,7 @@ interface UserState {
 // Define the initial state using that type
 const initialState: UserState = {
   winner: null,
-  list: Array(100)
-    .fill(0)
-    .map((_, index) => ({
-      id: index + 1,
-      label: index + 1,
-    })),
+  list: [],
 };
 
 export const userSlice = createSlice({
