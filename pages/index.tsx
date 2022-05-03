@@ -2,21 +2,17 @@ import type { NextPage } from "next";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { formateSecondToString } from "@/utils";
-
-const LIST = Array(100)
-  .fill(0)
-  .map((_, index) => ({
-    id: index + 1,
-    label: index + 1,
-  }));
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { setUserSlice } from "@/redux/slices/user";
 
 const MINUTE_SECOND = 60;
 
 const Home: NextPage = () => {
+  const dispatch = useAppDispatch();
+  const { list, winner } = useAppSelector((state) => state.user);
   const [isCountdown, setIsCountdown] = useState(false);
   const [value, setValue] = useState<number | "">("");
   const [second, setSecond] = useState(0);
-  const [winner, setWinner] = useState<string | number>("");
 
   const current = useMemo(() => formateSecondToString(second), [second]);
 
@@ -28,15 +24,24 @@ const Home: NextPage = () => {
     if (value !== "") {
       setSecond(value * MINUTE_SECOND);
       setIsCountdown(true);
+      dispatch(
+        setUserSlice({
+          winner: null,
+        })
+      );
     }
-  }, [value]);
+  }, [dispatch, value]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined = undefined;
 
     if (isCountdown) {
       if (second === 0) {
-        setWinner(LIST[Math.floor(Math.random() * LIST.length)].label);
+        dispatch(
+          setUserSlice({
+            winner: list[Math.floor(Math.random() * list.length)],
+          })
+        );
         setIsCountdown(false);
       } else {
         timer = setTimeout(() => {
@@ -47,7 +52,7 @@ const Home: NextPage = () => {
     return () => {
       clearTimeout(timer as number | undefined);
     };
-  }, [isCountdown, second]);
+  }, [dispatch, isCountdown, list, second]);
 
   return (
     <main className="flex justify-center items-center bg-blue-200">
@@ -69,17 +74,17 @@ const Home: NextPage = () => {
           </button>
           <p className="text-2xl text-blue-500">{current}</p>
 
-          {winner !== "" && (
+          {winner && (
             <div className="mt-4">
               <h4 className="text-xl">抽獎結果</h4>
               <div className="p-2 border">
-                <p>{winner}</p>
+                <p>{winner.label}</p>
               </div>
             </div>
           )}
         </div>
         <div className="flex-1 overflow-y-scroll">
-          {LIST.map((item) => (
+          {list.map((item) => (
             <div key={item.id}>{item.label}</div>
           ))}
         </div>

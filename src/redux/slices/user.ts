@@ -1,13 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
+
+interface User {
+  id: number;
+  label: number;
+}
 interface UserState {
-  list: string[];
+  winner: User | null;
+  list: User[];
 }
 
 // Define the initial state using that type
 const initialState: UserState = {
-  list: [],
+  winner: null,
+  list: Array(100)
+    .fill(0)
+    .map((_, index) => ({
+      id: index + 1,
+      label: index + 1,
+    })),
 };
 
 export const userSlice = createSlice({
